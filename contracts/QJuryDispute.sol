@@ -51,6 +51,9 @@ contract QJuryDispute {
         randomOracle = MockQRandomOracle(_randomOracle);
     }
     
+
+
+    
     /**
      * @dev Create a new dispute
      * @param description Description of the dispute
