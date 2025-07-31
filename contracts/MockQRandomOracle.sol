@@ -2,6 +2,9 @@
 pragma solidity ^0.8.19;
 
 
+
+
+
 /**
  * @title MockQRandomOracle
  * @dev Mock quantum random number oracle for testing QJury system
@@ -23,6 +26,8 @@ contract MockQRandomOracle {
         emit RandomnessRequested(requestId);
         return requestId;
     }
+    
+
     
     /**
      * @dev Manually set a random value for testing (only for mock)
