@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+
 /**
  * @title MockQRandomOracle
  * @dev Mock quantum random number oracle for testing QJury system
