@@ -230,7 +230,7 @@ contract QJurySystemTest is Test {
         }
     }
     
-    function _verifyFinalState(uint256 disputeId) internal {
+    function _verifyFinalState(uint256 disputeId) internal view {
         console.log("=== Verifying Final State ===");
         
         // Verify dispute is fully resolved

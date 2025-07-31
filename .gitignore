@@ -1,0 +1,45 @@
+# =====================
+# Node.js (for Thirdweb)
+# =====================
+node_modules/
+.env
+*.env.*
+dist/
+.next/
+out/
+QJury-ui/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================
+# Foundry (for Solidity)
+# =====================
+out/
+artifacts/
+cache/
+lib/
+
+# Foundry build output
+forge-artifacts/
+forge-cache/
+
+# =====================
+# OS-specific junk
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# IDE/editor junk
+# =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =====================
+# Misc
+# =====================
+*.tsbuildinfo

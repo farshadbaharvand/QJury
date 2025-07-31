@@ -2,7 +2,7 @@
 
 QJury is an on-chain decentralized dispute resolution system where randomly selected jurors vote on disputes. Jurors stake ETH to register, vote on disputes, and are rewarded or slashed depending on whether they vote with or against the majority. Random juror selection is done via a quantum random number oracle.
 
-## 🎯 System Overview
+## System Overview
 
 The QJury system consists of four main smart contracts that work together to provide a fair and decentralized dispute resolution mechanism:
 
@@ -12,7 +12,7 @@ The QJury system consists of four main smart contracts that work together to pro
 4. **QJuryReward** - Distributes rewards and applies slashing
 5. **MockQRandomOracle** - Quantum randomness simulation for testing
 
-## 🔧 Smart Contracts
+## Smart Contracts
 
 ### QJuryRegistry.sol
 - **Purpose**: Juror registration with ETH stake, track juror status, allow slashing
@@ -56,7 +56,7 @@ The QJury system consists of four main smart contracts that work together to pro
   - Request/fulfillment pattern
   - Randomness verification
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
@@ -85,7 +85,7 @@ forge build
 forge test
 ```
 
-## 🧪 Testing
+## Testing
 
 The project includes comprehensive tests covering:
 
@@ -118,7 +118,7 @@ forge test -vvv
 forge test --match-test testFullQJuryWorkflow -vvv
 ```
 
-## 📋 System Flow
+## System Flow
 
 1. **Juror Registration**
    - Jurors stake minimum 0.1 ETH
@@ -146,7 +146,7 @@ forge test --match-test testFullQJuryWorkflow -vvv
    - Incorrect voters get 10% stake slashed
    - Rewards distributed from fees + slashed amounts
 
-## 🔧 Configuration
+## Configuration
 
 ### Key Constants
 - Minimum stake: `0.1 ETH`
@@ -156,14 +156,7 @@ forge test --match-test testFullQJuryWorkflow -vvv
 - Slash percentage: `10%`
 - Base reward: `0.001 ETH`
 
-### Gas Estimates
-- Juror registration: ~120k gas
-- Dispute creation: ~240k gas
-- Juror assignment: ~650k gas
-- Vote casting: ~140k gas
-- Reward distribution: ~300k gas
-
-## 🚨 Security Considerations
+## Security Considerations
 
 - **Access Control**: Registry functions should be restricted to authorized contracts
 - **Reentrancy**: Safe ETH transfers implemented
@@ -171,30 +164,9 @@ forge test --match-test testFullQJuryWorkflow -vvv
 - **Randomness**: Production should use real quantum oracle, not mock
 - **Governance**: Emergency functions need proper governance controls
 
-## 🛣️ Future Enhancements
 
-- **Multi-round Voting**: Appeals process
-- **Dynamic Juror Pools**: Category-specific expert jurors
-- **Reputation System**: Long-term juror performance tracking
-- **Economic Incentives**: Dynamic rewards based on dispute complexity
-- **Frontend Interface**: User-friendly dispute creation and voting UI
 
-## 📄 License
+
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📞 Support
-
-For questions and support, please open an issue in the repository or contact the development team.
-
----
-
-**⚠️ Disclaimer**: This is experimental software. Use at your own risk in production environments.

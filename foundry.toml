@@ -7,10 +7,10 @@ cache_path = "cache"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 
-[profile.default.model_checker]
-contracts = { '/path/to/project/src/MyContract.sol' = [ 'Contract' ] }
-engine = 'chc'
-targets = [ 'assert' ]
+#[profile.default.model_checker]
+#contracts = { 'E:/Project/Ethereum/Qjury/contracts/MyContract.sol' = [ 'Contract' ] }
+#engine = 'chc'
+#targets = [ 'assert' ]
 
 solc_version = "0.8.19"
 optimizer = true
