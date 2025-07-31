@@ -44,6 +44,7 @@ contract QJuryDispute {
         _;
     }
     
+
     
     constructor(address _registry, address _voteContract, address _randomOracle) {
         registry = QJuryRegistry(_registry);
