@@ -51,9 +51,13 @@ contract QJuryVote {
         _;
     }
     
+
     constructor(address _registry) {
         registry = QJuryRegistry(_registry);
     }
+    
+
+
     
     /**
      * @dev Start voting for a dispute with assigned jurors
