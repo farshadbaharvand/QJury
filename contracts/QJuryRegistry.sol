@@ -137,6 +137,9 @@ contract QJuryRegistry {
             }
         }
         
+
+
+        
         // Resize array to actual count
         address[] memory result = new address[](count);
         for (uint256 i = 0; i < count; i++) {
