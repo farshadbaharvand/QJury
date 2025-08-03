@@ -43,7 +43,15 @@ contract QuantumIntegrationTest is Test {
     function setUp() public {
         // Deploy contracts
         registry = new QJuryRegistry();
+
+        //quantumOracle = new QuantumRandomOracle();
+
+        vm.startPrank(owner);
         quantumOracle = new QuantumRandomOracle();
+        vm.stopPrank();
+        //nabood
+
+
         mockOracle = new MockQRandomOracle();
         voteContract = new QJuryVote(address(registry));
         disputeContract = new QJuryDispute(address(registry), address(voteContract), address(quantumOracle));
@@ -69,7 +77,7 @@ contract QuantumIntegrationTest is Test {
         vm.stopPrank();
     }
     
-    function testQuantumOracleDeployment() public {
+    function testQuantumOracleDeployment() public view  {
         console.log("=== Testing Quantum Oracle Deployment ===");
         
         assertEq(quantumOracle.owner(), owner);
