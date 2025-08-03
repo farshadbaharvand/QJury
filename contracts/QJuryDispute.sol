@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import "./QJuryRegistry.sol";
 import "./QJuryVote.sol";
-import "./MockQRandomOracle.sol";
+import "./QuantumRandomOracle.sol";
 
 /**
  * @title QJuryDispute
@@ -22,6 +22,7 @@ contract QJuryDispute {
         address[] assignedJurors;
         uint256 randomnessRequestId;
         bool randomnessFulfilled;
+        uint256 metadata; // Additional metadata for frontend
     }
     
     mapping(uint256 => Dispute) public disputes;
@@ -29,15 +30,16 @@ contract QJuryDispute {
     
     QJuryRegistry public immutable registry;
     QJuryVote public immutable voteContract;
-    MockQRandomOracle public immutable randomOracle;
+    QuantumRandomOracle public immutable randomOracle;
     
     uint256 public constant DISPUTE_FEE = 0.01 ether;
     uint256 public constant JURORS_PER_DISPUTE = 10;
     
-    event DisputeCreated(uint256 indexed disputeId, address indexed creator, string description, uint256 fee);
-    event RandomnessRequested(uint256 indexed disputeId, uint256 randomnessRequestId);
-    event JurorsAssigned(uint256 indexed disputeId, address[] assignedJurors);
-    event DisputeResolved(uint256 indexed disputeId);
+    event DisputeCreated(uint256 indexed disputeId, address indexed creator, string description, uint256 fee, uint256 timestamp);
+    event RandomnessRequested(uint256 indexed disputeId, uint256 randomnessRequestId, uint256 timestamp);
+    event JurorsAssigned(uint256 indexed disputeId, address[] assignedJurors, uint256 timestamp);
+    event DisputeResolved(uint256 indexed disputeId, uint256 timestamp);
+    event DisputeMetadataUpdated(uint256 indexed disputeId, uint256 metadata);
     
     modifier onlyValidDispute(uint256 disputeId) {
         require(disputes[disputeId].id != 0, "Dispute does not exist");
@@ -48,7 +50,7 @@ contract QJuryDispute {
     constructor(address _registry, address _voteContract, address _randomOracle) {
         registry = QJuryRegistry(_registry);
         voteContract = QJuryVote(_voteContract);
-        randomOracle = MockQRandomOracle(_randomOracle);
+        randomOracle = QuantumRandomOracle(_randomOracle);
     }
     
 
@@ -73,10 +75,11 @@ contract QJuryDispute {
             status: DisputeStatus.Created,
             assignedJurors: new address[](0),
             randomnessRequestId: 0,
-            randomnessFulfilled: false
+            randomnessFulfilled: false,
+            metadata: 0
         });
         
-        emit DisputeCreated(disputeId, msg.sender, description, msg.value);
+        emit DisputeCreated(disputeId, msg.sender, description, msg.value, block.timestamp);
         
         // Immediately request randomness for juror selection
         _requestRandomnessForJurorSelection(disputeId);
@@ -92,7 +95,7 @@ contract QJuryDispute {
         uint256 requestId = randomOracle.requestRandomness();
         disputes[disputeId].randomnessRequestId = requestId;
         
-        emit RandomnessRequested(disputeId, requestId);
+        emit RandomnessRequested(disputeId, requestId, block.timestamp);
     }
     
     /**
@@ -117,7 +120,7 @@ contract QJuryDispute {
         dispute.status = DisputeStatus.JurorsAssigned;
         dispute.randomnessFulfilled = true;
         
-        emit JurorsAssigned(disputeId, selectedJurors);
+        emit JurorsAssigned(disputeId, selectedJurors, block.timestamp);
         
         // Start voting immediately after juror assignment
         voteContract.startVoting(disputeId, selectedJurors);
@@ -173,7 +176,7 @@ contract QJuryDispute {
         
         dispute.status = DisputeStatus.Resolved;
         
-        emit DisputeResolved(disputeId);
+        emit DisputeResolved(disputeId, block.timestamp);
     }
     
     /**
@@ -211,6 +214,103 @@ contract QJuryDispute {
         Dispute storage dispute = disputes[disputeId];
         return dispute.status == DisputeStatus.Created && 
                randomOracle.isRequestFulfilled(dispute.randomnessRequestId);
+    }
+    
+    /**
+     * @dev Update dispute metadata for frontend display
+     * @param disputeId The ID of the dispute
+     * @param metadata The metadata to set
+     */
+    function updateDisputeMetadata(uint256 disputeId, uint256 metadata) external onlyValidDispute(disputeId) {
+        Dispute storage dispute = disputes[disputeId];
+        require(dispute.creator == msg.sender, "Only dispute creator can update metadata");
+        
+        dispute.metadata = metadata;
+        emit DisputeMetadataUpdated(disputeId, metadata);
+    }
+    
+    /**
+     * @dev Get dispute information with enhanced frontend data
+     * @param disputeId The ID of the dispute
+     * @return dispute The dispute struct with all details
+     * @return canAssignJurors Whether jurors can be assigned
+     * @return eligibleJurorCount Number of eligible jurors
+     */
+    function getDisputeWithDetails(uint256 disputeId) external view returns (
+        Dispute memory dispute,
+        bool canAssignJurors,
+        uint256 eligibleJurorCount
+    ) {
+        dispute = disputes[disputeId];
+        canAssignJurors = this.canAssignJurors(disputeId);
+        eligibleJurorCount = registry.getEligibleJurors().length;
+    }
+    
+    /**
+     * @dev Get time until randomness request expires
+     * @param disputeId The ID of the dispute
+     * @return timeUntilExpiry Time until randomness request expires
+     */
+    function getTimeUntilExpiry(uint256 disputeId) external view returns (uint256 timeUntilExpiry) {
+        Dispute storage dispute = disputes[disputeId];
+        
+        if (dispute.randomnessRequestId > 0) {
+            (bool fulfilled, , uint256 requestTime) = randomOracle.getRequestDetails(dispute.randomnessRequestId);
+            if (!fulfilled && requestTime > 0) {
+                uint256 expiryTime = requestTime + randomOracle.MAX_FULFILLMENT_DELAY();
+                timeUntilExpiry = block.timestamp >= expiryTime ? 0 : expiryTime - block.timestamp;
+            }
+        }
+    }
+    
+    /**
+     * @dev Get all disputes for a creator
+     * @param creator The address of the dispute creator
+     * @return Array of dispute IDs created by the address
+     */
+    function getDisputesByCreator(address creator) external view returns (uint256[] memory) {
+        uint256[] memory creatorDisputes = new uint256[](disputeCounter);
+        uint256 count = 0;
+        
+        for (uint256 i = 1; i <= disputeCounter; i++) {
+            if (disputes[i].creator == creator) {
+                creatorDisputes[count] = i;
+                count++;
+            }
+        }
+        
+        // Resize array to actual count
+        uint256[] memory result = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            result[i] = creatorDisputes[i];
+        }
+        
+        return result;
+    }
+    
+    /**
+     * @dev Get disputes by status
+     * @param status The dispute status to filter by
+     * @return Array of dispute IDs with the specified status
+     */
+    function getDisputesByStatus(DisputeStatus status) external view returns (uint256[] memory) {
+        uint256[] memory statusDisputes = new uint256[](disputeCounter);
+        uint256 count = 0;
+        
+        for (uint256 i = 1; i <= disputeCounter; i++) {
+            if (disputes[i].status == status) {
+                statusDisputes[count] = i;
+                count++;
+            }
+        }
+        
+        // Resize array to actual count
+        uint256[] memory result = new uint256[](count);
+        for (uint256 i = 0; i < count; i++) {
+            result[i] = statusDisputes[i];
+        }
+        
+        return result;
     }
     
     /**

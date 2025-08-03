@@ -1,0 +1,45 @@
+{
+  "name": "qjury-quantum-oracle",
+  "version": "1.0.0",
+  "description": "Quantum Randomness Oracle for QJury Decentralized Dispute Resolution System",
+  "main": "scripts/qrng-fetch.js",
+  "scripts": {
+    "start": "node scripts/qrng-fetch.js monitor",
+    "monitor": "node scripts/qrng-fetch.js monitor",
+    "fulfill": "node scripts/qrng-fetch.js fulfill",
+    "test": "node scripts/qrng-fetch.js test",
+    "install-deps": "npm install",
+    "setup": "cp env.example .env && echo 'Please edit .env with your configuration'"
+  },
+  "keywords": [
+    "ethereum",
+    "quantum",
+    "randomness",
+    "oracle",
+    "blockchain",
+    "dispute-resolution",
+    "qjury"
+  ],
+  "author": "QJury Team",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^6.8.1",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/qjury.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/qjury/issues"
+  },
+  "homepage": "https://github.com/your-org/qjury#readme"
+} 

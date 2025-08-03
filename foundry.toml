@@ -36,6 +36,6 @@ eth_rpc_url = "${ETH_RPC_URL}"
 etherscan_api_key = "${ETHERSCAN_API_KEY}"
 
 # Compiler settings
-via_ir = false
+via_ir = true
 bytecode_hash = "none"
 cbor_metadata = false

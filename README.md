@@ -49,6 +49,14 @@ The QJury system consists of four main smart contracts that work together to pro
   - Base reward: 0.001 ETH per correct vote
   - Automatic reward calculation and distribution
 
+### QuantumRandomOracle.sol
+- **Purpose**: Real quantum random number oracle using ANU QRNG API
+- **Key Features**:
+  - Authorized oracle operator access control
+  - Request/fulfillment pattern with timeouts
+  - Quantum randomness verification
+  - Production-ready security features
+
 ### MockQRandomOracle.sol
 - **Purpose**: Quantum random number oracle simulation for testing
 - **Key Features**:
@@ -60,7 +68,8 @@ The QJury system consists of four main smart contracts that work together to pro
 
 ### Prerequisites
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
-- Node.js and npm (optional, for frontend development)
+- Node.js and npm (for quantum oracle service)
+- Ethereum RPC endpoint (Alchemy, Infura, etc.)
 
 ### Installation
 
@@ -80,7 +89,18 @@ forge install
 forge build
 ```
 
-4. Run tests:
+4. Install Node.js dependencies:
+```bash
+npm install
+```
+
+5. Set up environment:
+```bash
+cp env.example .env
+# Edit .env with your configuration
+```
+
+6. Run tests:
 ```bash
 forge test
 ```
@@ -88,6 +108,14 @@ forge test
 ## Testing
 
 The project includes comprehensive tests covering:
+
+### Quantum Integration Tests
+- Quantum oracle deployment and authorization
+- Randomness request and fulfillment
+- Oracle access control and security
+- Full quantum workflow integration
+- Frontend integration functions
+- Edge cases and error handling
 
 ### End-to-End Workflow Test
 - Juror registration
@@ -113,6 +141,9 @@ forge test
 
 # Run with verbose output
 forge test -vvv
+
+# Run quantum integration tests
+forge test --match-contract QuantumIntegrationTest -vvv
 
 # Run specific test
 forge test --match-test testFullQJuryWorkflow -vvv
@@ -161,11 +192,34 @@ forge test --match-test testFullQJuryWorkflow -vvv
 - **Access Control**: Registry functions should be restricted to authorized contracts
 - **Reentrancy**: Safe ETH transfers implemented
 - **Integer Overflow**: Using Solidity 0.8.19+ with built-in overflow protection
-- **Randomness**: Production should use real quantum oracle, not mock
+- **Quantum Randomness**: Production uses real quantum oracle with ANU QRNG API
+- **Oracle Security**: Authorized oracle operators with timeouts and validation
 - **Governance**: Emergency functions need proper governance controls
 
 
 
+
+## Quantum Randomness Integration
+
+For detailed information about the quantum randomness integration, see [QUANTUM_INTEGRATION.md](./QUANTUM_INTEGRATION.md).
+
+### Quick Quantum Setup
+
+1. **Deploy contracts**:
+   ```bash
+   forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast
+   ```
+
+2. **Configure oracle**:
+   ```bash
+   # Authorize oracle operator
+   cast send $ORACLE_CONTRACT_ADDRESS "setOracleAuthorization(address,bool)" $ORACLE_OPERATOR_ADDRESS true
+   ```
+
+3. **Start oracle service**:
+   ```bash
+   npm run monitor
+   ```
 
 ## License
 
