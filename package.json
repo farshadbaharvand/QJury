@@ -1,0 +1,48 @@
+{
+  "name": "qjury-quantum-randomness",
+  "version": "1.0.0",
+  "description": "QJury Decentralized Jury System with Quantum Randomness Integration",
+  "main": "scripts/qrng-fetch.js",
+  "scripts": {
+    "start": "node scripts/qrng-fetch.js",
+    "test-api": "node scripts/qrng-fetch.js test",
+    "check-auth": "node scripts/qrng-fetch.js auth",
+    "check-pending": "node scripts/qrng-fetch.js pending",
+    "deploy": "forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast --verify",
+    "test": "forge test -vvv",
+    "coverage": "forge coverage",
+    "format": "forge fmt",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "compile": "forge build",
+    "clean": "forge clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/qjury-quantum.git"
+  },
+  "keywords": [
+    "blockchain",
+    "jury",
+    "quantum",
+    "randomness",
+    "dispute",
+    "ethereum",
+    "thirdweb",
+    "foundry"
+  ],
+  "author": "QJury Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.1"
+  },
+  "devDependencies": {
+    "solhint": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bin": {
+    "qrng-fetch": "./scripts/qrng-fetch.js"
+  }
+}
