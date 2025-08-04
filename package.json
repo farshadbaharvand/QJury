@@ -8,6 +8,10 @@
     "monitor": "node scripts/qrng-fetch.js monitor",
     "fulfill": "node scripts/qrng-fetch.js fulfill",
     "test": "node scripts/qrng-fetch.js test",
+    "ui": "node oracle/index.js",
+    "ui:dev": "nodemon oracle/index.js",
+    "test:ui": "node test/QRandomness.test.js",
+    "test:quantum": "node oracle/services/quantumSim.js",
     "install-deps": "npm install",
     "setup": "cp env.example .env && echo 'Please edit .env with your configuration'"
   },
@@ -25,7 +29,8 @@
   "dependencies": {
     "ethers": "^6.8.1",
     "axios": "^1.6.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

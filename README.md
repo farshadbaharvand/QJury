@@ -68,7 +68,7 @@ The QJury system consists of four main smart contracts that work together to pro
 
 ### Prerequisites
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
-- Node.js and npm (for quantum oracle service)
+- Node.js and npm (for quantum oracle service and web interface)
 - Ethereum RPC endpoint (Alchemy, Infura, etc.)
 
 ### Installation
@@ -100,10 +100,37 @@ cp env.example .env
 # Edit .env with your configuration
 ```
 
+6. Start the web interface (optional):
+```bash
+npm run ui
+# Open http://localhost:3000 in your browser
+```
+
 6. Run tests:
 ```bash
 forge test
 ```
+
+## Web Interface
+
+The QJury system includes a modern web interface for monitoring disputes and quantum randomness:
+
+### Features
+- **Dashboard**: Real-time monitoring of disputes and quantum randomness requests
+- **Dispute Management**: View dispute details, voting status, and resolution
+- **Quantum Randomness**: Monitor quantum randomness requests and fulfillments
+- **API Endpoints**: RESTful API for integration with other systems
+
+### Quick Start
+```bash
+# Start the web interface
+npm run ui
+
+# Open in browser
+open http://localhost:3000
+```
+
+For detailed documentation, see [oracle/README.md](./oracle/README.md).
 
 ## Testing
 
