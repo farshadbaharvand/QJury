@@ -23,7 +23,12 @@ class QRNGOracle {
             ORACLE_ABI,
             this.wallet
         );
-        
+    }
+
+    /**
+     * Initialize the oracle and log connection details
+     */
+    async initialize() {
         console.log('🔗 Connected to network:', await this.provider.getNetwork());
         console.log('👤 Oracle address:', this.wallet.address);
         console.log('📋 Oracle contract:', process.env.ORACLE_CONTRACT_ADDRESS);
@@ -60,6 +65,10 @@ class QRNGOracle {
             return randomValue;
         } catch (error) {
             console.error('❌ Error fetching quantum randomness:', error.message);
+            if (error.response) {
+                console.error('Response status:', error.response.status);
+                console.error('Response data:', error.response.data);
+            }
             throw error;
         }
     }
@@ -87,7 +96,7 @@ class QRNGOracle {
                 return;
             }
 
-            console.log(`📅 Request timestamp: ${new Date(timestamp * 1000).toISOString()}`);
+            console.log(`📅 Request timestamp: ${new Date(Number(timestamp) * 1000).toISOString()}`);
 
             // Estimate gas for the transaction
             const gasEstimate = await this.oracleContract.fulfillRandomness.estimateGas(requestId, randomValue);
@@ -95,7 +104,7 @@ class QRNGOracle {
 
             // Send transaction
             const tx = await this.oracleContract.fulfillRandomness(requestId, randomValue, {
-                gasLimit: gasEstimate.mul(120).div(100) // Add 20% buffer
+                gasLimit: gasEstimate * 120n / 100n // Add 20% buffer
             });
 
             console.log(`📤 Transaction sent: ${tx.hash}`);
@@ -127,8 +136,8 @@ class QRNGOracle {
         this.oracleContract.on('RandomnessRequested', async (requestId, timestamp, event) => {
             console.log(`\n🎯 New randomness request detected!`);
             console.log(`📋 Request ID: ${requestId.toString()}`);
-            console.log(`⏰ Timestamp: ${new Date(timestamp * 1000).toISOString()}`);
-            console.log(`🔗 Transaction: ${event.transactionHash}`);
+            console.log(`⏰ Timestamp: ${new Date(Number(timestamp) * 1000).toISOString()}`);
+            console.log(`🔗 Transaction: ${event.log.transactionHash}`);
             
             try {
                 // Fetch quantum randomness
@@ -143,6 +152,9 @@ class QRNGOracle {
         });
 
         console.log('✅ Event listener active. Waiting for requests...');
+        
+        // Keep the process alive
+        process.stdin.resume();
     }
 
     /**
@@ -156,7 +168,7 @@ class QRNGOracle {
             // Check if request exists and is not fulfilled
             const [fulfilled, , timestamp] = await this.oracleContract.getRequestDetails(requestId);
             
-            if (timestamp === 0n) {
+            if (timestamp === 0n || timestamp === 0) {
                 console.log('❌ Request does not exist');
                 return;
             }
@@ -189,6 +201,8 @@ async function main() {
     }
 
     const oracle = new QRNGOracle();
+    await oracle.initialize();
+    global.oracleInstance = oracle; // Store for cleanup
     
     // Parse command line arguments
     const args = process.argv.slice(2);
@@ -226,11 +240,19 @@ async function main() {
 // Handle graceful shutdown
 process.on('SIGINT', () => {
     console.log('\n👋 Shutting down gracefully...');
+    // Clean up event listeners if oracle instance exists
+    if (global.oracleInstance && global.oracleInstance.oracleContract) {
+        global.oracleInstance.oracleContract.removeAllListeners();
+    }
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
     console.log('\n👋 Shutting down gracefully...');
+    // Clean up event listeners if oracle instance exists
+    if (global.oracleInstance && global.oracleInstance.oracleContract) {
+        global.oracleInstance.oracleContract.removeAllListeners();
+    }
     process.exit(0);
 });
 
