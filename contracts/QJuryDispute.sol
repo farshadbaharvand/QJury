@@ -233,16 +233,16 @@ contract QJuryDispute {
      * @dev Get dispute information with enhanced frontend data
      * @param disputeId The ID of the dispute
      * @return dispute The dispute struct with all details
-     * @return canAssignJurors Whether jurors can be assigned
+     * @return canAssignJurorsbool Whether jurors can be assigned
      * @return eligibleJurorCount Number of eligible jurors
      */
     function getDisputeWithDetails(uint256 disputeId) external view returns (
         Dispute memory dispute,
-        bool canAssignJurors,
+        bool canAssignJurorsbool,
         uint256 eligibleJurorCount
     ) {
         dispute = disputes[disputeId];
-        canAssignJurors = this.canAssignJurors(disputeId);
+        canAssignJurorsbool = this.canAssignJurors(disputeId);
         eligibleJurorCount = registry.getEligibleJurors().length;
     }
     
