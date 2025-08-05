@@ -23,9 +23,11 @@
   "author": "QJury Team",
   "license": "MIT",
   "dependencies": {
-    "ethers": "^6.8.1",
+    "@thirdweb-dev/react": "^4.9.4",
+    "@thirdweb-dev/sdk": "^4.0.99",
     "axios": "^1.6.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "ethers": "^5.8.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
@@ -42,4 +44,4 @@
     "url": "https://github.com/your-org/qjury/issues"
   },
   "homepage": "https://github.com/your-org/qjury#readme"
-} 
+}
